@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/25 03:47:18 by elehtora          #+#    #+#             */
-/*   Updated: 2022/02/26 23:26:43 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/03/21 19:05:15 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,17 @@
  * fd into a buffer.
  */
 
+char	*copy_until_newline();
+{
+	
+}
+
 int	get_next_line(const int fd, char **line)
 {
-	static char	*line_stop;
+	char	buf[BUFF_SIZE];
+
+	bytes_read = read(fd, buf, BUFF_SIZE);
+	if (bytes_read == 0)
+		return (0);
+	copy_until_newline();
 }

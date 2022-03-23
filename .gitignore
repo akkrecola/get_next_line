@@ -1,3 +1,9 @@
+# Project specific
+tests
+Makefile
+.gitignore
+*.swp*
+
 # Prerequisites
 *.d
 

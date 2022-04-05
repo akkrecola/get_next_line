@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/25 03:47:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/03/22 20:30:19 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/04/02 11:44:43 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 # define GET_NEXT_LINE_H
 
 /* Include libft from project root, as it's used in the entire project. */
-# include "libft.h"
+# include "libft/libft.h"
 
 /* System includes for permitted functions. */
 # include <stdlib.h>
 # include <unistd.h>
 
 /* Definition for read() size. Varied during defence. */
-# define BUFF_SIZE 100
+# define BUFF_SIZE 10000
 
 /* Definition for maximum open file descriptors (in mouli). */
 # define MAX_FD 4096

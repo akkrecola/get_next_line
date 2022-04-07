@@ -6,68 +6,113 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/25 03:47:18 by elehtora          #+#    #+#             */
-/*   Updated: 2022/04/06 15:06:51 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/04/07 06:02:39 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-static int	update_cache(char **cache, char **buf, char **newline)
+/*
+static int	join(char **line, char **buf, char **newline, const int fd)
 {
-	if (!*newline)
-		*cache = ft_strdup(*buf);
-	*newline = ft_strsep(cache, '\n');
-	if (!*cache)
-		return (-1);
-	return (0);
-}
-
-static int	join(char **line, char **cache, char **newline)
-{
-	*line = ft_strjoin(*line, *cache);
-	if (!*line)
-		return (-1);
-	if (*newline)
-		*cache = *newline;
-	return (0);
-}
-
-/* retrieve cache content to line between calls */
-static int	get_cache(char **line, char **cache, char **newline)
-{
-	if (*cache)
+	while (!newline && ret > 0)
 	{
-		*newline = ft_strsep(cache, '\n');
-		if (*newline)
-			return (join(line, cache, newline));
+		if (!**buf)
+		{
+			ret = read(fd, &buf, BUFF_SIZE);
+			if (ret < 1)
+				return (ret);
+		}
+		*newline = ft_strsep(buf, '\n');
+		*line = ft_strjoin(*line, *buf);
+		if (!*line)
+			return (-1);
+		if (!*newline)
+			ft_memset(*buf, '\0', (BUFF_SIZE + 1));
+	} //add proper returns
+}
+*/
+/*
+// init cache if doesn't exist
+static int	pop(char **line, char **buf, char **cache, char **newline)
+{
+	if (!*cache && !**cache)
+	{
+		*cache = ft_strnew(BUFF_SIZE);
+		if (!*cache)
+			return (-1);
 	}
-	return (0);
+	else
+	{
+		ft_memcpy(*buf, *cache, BUFF_SIZE + 1);
+		join();
+	}
+}
+*/
+
+/*
+// if EOF, free cache
+static int	stash(char **cache, char **buf, char **newline)
+{
+	free(*cache);
+	*cache = ft_strdup(*newline);
+}
+*/
+
+char	*ft_strsep_arr(char *p_string[], int c)
+{
+	char	*latter;
+
+	if (!p_string || !*p_string || !ft_isascii(c))
+		return (NULL);
+	latter = ft_strchr(*p_string, c);
+	if (!latter)
+		return (NULL);
+	else
+	{
+		*latter = '\0';
+		latter++;
+	}
+	return (latter);
 }
 
+/*
+   1. Retrieve cache (pop/dig)
+   2. Join until newline found OR ret == 0 (join)
+   3. Fill cache if newline found (stash)
+*/
 int	get_next_line(const int fd, char **line)
 {
 	int			ret;
-	char		buf[BUFF_SIZE + 1];
+	char		buf;
 	char		*newline;
 	static char	*cache[MAX_FD];
 
 	if (*line)
 		free(line);
 	*line = ft_strnew(0);
-	ret = get_cache();
-	if (ret != 0)
-		return (ret);
-	while (!newline)
+	buf = ft_strnew(BUFF_SIZE);
+	if (cache[fd]) //checks what exactly?
+		ft_memcpy(buf, *cache, BUFF_SIZE + 1); //pop cache
+	ft_memset(buf, '\0', BUFF_SIZE + 1);
+	while (!newline && ret > 0)
 	{
-		ft_memset(buf, '\0', BUFF_SIZE + 1);
-		ret = read(fd, buf, BUFF_SIZE);
-		if (ret < 1)
-			return (ret);
-		buf[ret] = '\0';
-		if (update_cache(cache, &buf, newline) == -1)
+		if (!*buf)
+		{
+			ret = read(fd, &buf, BUFF_SIZE);
+			if (ret < 1)
+			{
+				free(*line);
+				return (ret);
+			}
+		}
+		newline = ft_strsep_arr(&buf, '\n');
+		*line = ft_strjoin(*line, buf);
+		if (!*line)
 			return (-1);
-		if (join(line, cache, newline) == -1)
-			return (-1);
+		if (!newline)
+			ft_memset(buf, '\0', (BUFF_SIZE + 1));
 	}
+	free(cache[fd]);
+	cache[fd] = ft_strdup(newline); //stash cache
 	return (1);
 }

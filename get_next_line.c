@@ -5,114 +5,90 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/25 03:47:18 by elehtora          #+#    #+#             */
-/*   Updated: 2022/04/07 06:02:39 by elehtora         ###   ########.fr       */
+/*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
+/*   Updated: 2022/04/12 12:14:19 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/*
-static int	join(char **line, char **buf, char **newline, const int fd)
+
+static int	init(char **line, char **buf, char **newline)
 {
-	while (!newline && ret > 0)
+	if (line && *line)
+		free(*line);
+	*line = ft_strnew(0);
+	if (!line || !*line)
+		return (-1);
+	*newline = NULL;
+	ft_bzero(*buf, BUFF_SIZE + 1);
+	if (cache && !*cache)
+		ft_strnew(BUFF_SIZE);
+	if (!cache || !*cache)
+		return (-1);
+	return (0);
+}
+
+/* Might not be needed as join() handles both buffer and cache
+static int	pop(char **cache)
+{
+	
+}
+*/
+
+//TODO
+static int	stash(char **newline, char **cache)
+{
+	if (cache && *cache)
 	{
-		if (!**buf)
-		{
-			ret = read(fd, &buf, BUFF_SIZE);
-			if (ret < 1)
-				return (ret);
-		}
+		ft_strclr(*cache);
+		ft_strdup(*cache, *newline);
+	}
+}
+
+/*
+   join() should not care about the state of cache and which input it gets as
+   the string, since we use it for 1. the cache and 2. the read buffer at
+   different stages.
+*/
+static int	join(char **buf, char **line, char **newline, char **cache)
+{
+	while (!*newline)
+	{
 		*newline = ft_strsep(buf, '\n');
 		*line = ft_strjoin(*line, *buf);
 		if (!*line)
 			return (-1);
-		if (!*newline)
-			ft_memset(*buf, '\0', (BUFF_SIZE + 1));
-	} //add proper returns
-}
-*/
-/*
-// init cache if doesn't exist
-static int	pop(char **line, char **buf, char **cache, char **newline)
-{
-	if (!*cache && !**cache)
-	{
-		*cache = ft_strnew(BUFF_SIZE);
-		if (!*cache)
-			return (-1);
 	}
-	else
-	{
-		ft_memcpy(*buf, *cache, BUFF_SIZE + 1);
-		join();
-	}
-}
-*/
-
-/*
-// if EOF, free cache
-static int	stash(char **cache, char **buf, char **newline)
-{
-	free(*cache);
-	*cache = ft_strdup(*newline);
-}
-*/
-
-char	*ft_strsep_arr(char *p_string[], int c)
-{
-	char	*latter;
-
-	if (!p_string || !*p_string || !ft_isascii(c))
-		return (NULL);
-	latter = ft_strchr(*p_string, c);
-	if (!latter)
-		return (NULL);
-	else
-	{
-		*latter = '\0';
-		latter++;
-	}
-	return (latter);
+	if (stash(newline, cache) == -1)
+		return (-1);
+	if (*newline)
+		return (1);
+	return (0);
 }
 
-/*
-   1. Retrieve cache (pop/dig)
-   2. Join until newline found OR ret == 0 (join)
-   3. Fill cache if newline found (stash)
-*/
 int	get_next_line(const int fd, char **line)
 {
-	int			ret;
-	char		buf;
-	char		*newline;
-	static char	*cache[MAX_FD];
+	int		ret;
+	char	buf[BUFF_SIZE + 1];
+	char	*newline;
+	char	*cache[MAX_FD];
 
-	if (*line)
-		free(line);
-	*line = ft_strnew(0);
-	buf = ft_strnew(BUFF_SIZE);
-	if (cache[fd]) //checks what exactly?
-		ft_memcpy(buf, *cache, BUFF_SIZE + 1); //pop cache
-	ft_memset(buf, '\0', BUFF_SIZE + 1);
+	if (init(line, buf, &newline) || pop() == -1) //initialize variables and prepare function
+		return (-1);
+	ret = join(cache, line); // iterate through cache if there's one
+	if (ret)
+		return (ret);
 	while (!newline && ret > 0)
 	{
-		if (!*buf)
+		ret = read(fd, buf, BUFF_SIZE);
+		if (ret > 0)
 		{
-			ret = read(fd, &buf, BUFF_SIZE);
-			if (ret < 1)
-			{
-				free(*line);
-				return (ret);
-			}
+			if (join(buf, line, &newline) == -1)
+				return (-1);
 		}
-		newline = ft_strsep_arr(&buf, '\n');
-		*line = ft_strjoin(*line, buf);
-		if (!*line)
-			return (-1);
-		if (!newline)
-			ft_memset(buf, '\0', (BUFF_SIZE + 1));
 	}
-	free(cache[fd]);
-	cache[fd] = ft_strdup(newline); //stash cache
-	return (1);
+	// ft_putendl(*line); //testing
+	if (ret == 0 && (cache && *cache))
+		free(*cache);
+	return (ret);
 }

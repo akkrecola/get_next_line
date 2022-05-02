@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/02 16:21:35 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/02 16:45:48 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
  * >> Operations are done assuming there's no literal 0's in the read lines.
  * >> ft_strsep() replaces newline character with a 0 and returns a pointer
  * to the following character, so there's TWO actions to it.
+ * >> Calls to cache() and join() come from two different states, i.e. 2. when
+ * 'popping' the cache and 2. when iterating a line with the buffer.
  *
  * 1. Check if variables have been initialized for given fildes (if cache[fd]
  * exists)
@@ -63,48 +65,47 @@
  * join() returns 1, 0 or -1, if a newline has been found, if it was not found,
  * or if an error has occured, respectively.
  */
-static int init(char **line, char **cache, char *buf)
+static int init(char **line, char **cache, char *buf, char **newline)
 {
-	if (!*cache)
-		*cache = ft_strnew(BUFF_SIZE);
+	// if (!*cache)
+	//	*cache = ft_strnew(BUFF_SIZE);
 	if (!*line)
 		*line = ft_strnew(0);
 	ft_bzero(buf, BUFF_SIZE + 1);
+	*newline = NULL;
 	// TODO
 	if (!*line || !*cache)
 		return (-1);
 }
 
-static int	join(char **line, char **str)
+static int	join(char **line, char **str, char **newline)
 {
 	char	*temp;
 
-	while (!*newline)
-	{
-		*newline = ft_strsep(str, '\n');
-		temp = *line;
-		*line = ft_strjoin(*line, *str);
-		free(temp);
-		if (!*line)
-			return (0);
-	}
+	*newline = ft_strsep(str, '\n');
+	temp = *line;
+	*line = ft_strjoin(*line, *str);
+	free(temp);
+	if (!*line)
+		return (-1);
+	return (1);
 }
 
-static int	stash()
+static int	stash(char **cache, char **newline) //newline can refer to either the cache (pop) or buffer (iteration)
 {
-	if (!*cache)
+	if (!*cache && *newline) //cache states (non-init OR need to clear)
 	{
 		*cache = ft_strdup(*newline);
 		return (1);
-	} //
+	}
+	return (-1);
 }
 
 static int	pop(char **line, char **cache, char **newline)
 {
 	if (*cache)
 	{
-		*newline = ft_strsep(cache, '\n');
-		join(line, cache);
+		join(line, cache, newline);
 		if (*newline)
 			return (stash()); //
 	}
@@ -124,9 +125,18 @@ int	get_next_line(const int fd, char **line)
 	{
 		ft_putstr("No cache for fildes: "); //testing
 		ft_putnbr(fd); // testing
-		ret = init(line, cache, &(*buf));
+		ret = init(line, cache, &(*buf), &newline); // braces needed?
 	}
-	ret = pop();
+	ret = pop(); //
 	if (ret)
 		return (ret);
+	while (ret)
+	{
+		ret = read(); //
+		if (join() == -1) //
+			return (-1);
+		if (*newline)
+			return (stash()); //
+	}
+	return (0);
 }

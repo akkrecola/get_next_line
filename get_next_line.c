@@ -6,12 +6,11 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/02 16:17:04 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/02 16:21:35 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
 
 /*
  * NOTES:
@@ -37,16 +36,6 @@
  * Create a line as the strjoin() base if none exists
  * Allocate buffer if this is the first call to this fildes
  */
-static int	init(char **line, char **cache, char **buf, char **newline)
-{
-	if (!*line)
-		*line = ft_strnew(0);
-}
-static int	pop(char **cache)
-{
-
-}
-
 //TODO
 /*
  * stash() stores the rest of a buffer ready for a new call to get_next_line().

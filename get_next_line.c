@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/02 16:45:48 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/03 15:03:39 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,78 +65,86 @@
  * join() returns 1, 0 or -1, if a newline has been found, if it was not found,
  * or if an error has occured, respectively.
  */
-static int init(char **line, char **cache, char *buf, char **newline)
+static ssize_t	init(char **line, char *buf, char **newline)
 {
-	// if (!*cache)
-	//	*cache = ft_strnew(BUFF_SIZE);
+	if (*line)
+		free(*line);
+	*line = ft_strnew(0);
 	if (!*line)
-		*line = ft_strnew(0);
+		return (-1);
 	ft_bzero(buf, BUFF_SIZE + 1);
 	*newline = NULL;
 	// TODO
-	if (!*line || !*cache)
-		return (-1);
+	return (0);
 }
 
-static int	join(char **line, char **str, char **newline)
+/*
+* BUG? Case where '\n' refers to the last character in a file, and the
+* resulting pointer from ft_strsep would overflow the file buffer
+*/
+static ssize_t	join(char **line, char *str, char **newline)
 {
 	char	*temp;
 
-	*newline = ft_strsep(str, '\n');
+	*newline = ft_strsep(&str, '\n');
 	temp = *line;
-	*line = ft_strjoin(*line, *str);
+	*line = ft_strjoin(*line, str);
 	free(temp);
 	if (!*line)
+		return (-1);
+	return (0);
+}
+
+// Since buf is always null-terminated, cache is as well; hence strdup in stash()
+// doesn't overflow.
+//TODO cache states (non-init OR need to clear)
+static ssize_t	stash(char **cache, char **newline) //newline can refer to either the cache (pop) or buffer (iteration)
+{
+	char	*temp;
+
+	temp = ft_strdup(*newline);
+	if (*cache)
+		free(*cache);
+	*cache = temp;
+	if (!*cache)
 		return (-1);
 	return (1);
 }
 
-static int	stash(char **cache, char **newline) //newline can refer to either the cache (pop) or buffer (iteration)
-{
-	if (!*cache && *newline) //cache states (non-init OR need to clear)
-	{
-		*cache = ft_strdup(*newline);
-		return (1);
-	}
-	return (-1);
-}
-
-static int	pop(char **line, char **cache, char **newline)
+static ssize_t	pop(char **line, char **cache, char **newline)
 {
 	if (*cache)
 	{
-		join(line, cache, newline);
+		if (join(line, *cache, newline))
+			return (-1);
 		if (*newline)
-			return (stash()); //
+			return (stash(cache, newline)); //
 	}
 	return (0);
 }
 
 int	get_next_line(const int fd, char **line)
 {
-	static char	cache[MAX_FD];
+	static char	*cache[MAX_FD];
 	char		buf[BUFF_SIZE + 1];
 	char		*newline;
-	int			ret;
+	ssize_t		ret;
 
-	if (fd < 0 || fd > MAX_FD || !line)
+	if (fd < 0 || fd >= MAX_FD || !line)
 		return (-1);
-	if (!cache[fd])
-	{
-		ft_putstr("No cache for fildes: "); //testing
-		ft_putnbr(fd); // testing
-		ret = init(line, cache, &(*buf), &newline); // braces needed?
-	}
-	ret = pop(); //
+	if (init(line, &buf[0], &newline)) // check buffer deref syntax
+		return (-1);
+	ret = pop(line, &cache[fd], &newline); //
 	if (ret)
-		return (ret);
+		return ((int) ret);
+	ret = 1;
 	while (ret)
 	{
-		ret = read(); //
-		if (join() == -1) //
+		ret = read(fd, buf, BUFF_SIZE); //
+		if (join(line, buf, &newline)) //
 			return (-1);
-		if (*newline)
-			return (stash()); //
+		if (newline)
+			return ((int) stash(&cache[fd], &newline)); //
 	}
 	return (0);
 }

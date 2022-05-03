@@ -6,29 +6,38 @@
 #    By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/25 03:24:01 by elehtora          #+#    #+#              #
-#    Updated: 2022/04/17 00:48:26 by elehtora         ###   ########.fr        #
+#    Updated: 2022/05/03 14:02:08 by elehtora         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= gnl.out
+NAME		= gnl.out
 
-SRCS	= ../get_next_line.c main.c
-OBJS	= $(SRCS:.c=.o)
+SRCS		= ../get_next_line.c main.c
+OBJS		= $(SRCS:.c=.o)
+LIB			= -lft
 
-CC		= clang
-CFLAGS	= -Wall -Wextra -Werror -Wconversion
+CC			= gcc
+CFLAGS		= -Wall -Wextra -Werror -Wconversion
+DEBUG		= -g
 
-RM		= /bin/rm -f
+INCL		= -I..
+LIBPATH		= -L../libft
+
+RM			= /bin/rm -rf
 
 # RECIPES #
 
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
+
+debug : $(OBJS)
+	$(CC) $(DEBUG) $(OBJS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
+
 
 clean :
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(NAME).dSYM
 
 fclean : clean
 	$(RM) $(NAME)

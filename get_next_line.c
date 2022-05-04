@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/03 15:06:11 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/03 15:15:32 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,8 +143,10 @@ int	get_next_line(const int fd, char **line)
 		ret = read(fd, buf, BUFF_SIZE); //
 		if (join(line, buf, &newline)) //
 			return (-1);
-		if (newline)
+		if (newline && ret)
 			return ((int) stash(&cache[fd], &newline)); //
 	}
+	if (ret == 0 && *cache)
+		free(cache);
 	return (0);
 }

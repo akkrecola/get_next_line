@@ -6,7 +6,7 @@
 #    By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/25 03:24:01 by elehtora          #+#    #+#              #
-#    Updated: 2022/05/04 16:11:04 by elehtora         ###   ########.fr        #
+#    Updated: 2022/05/04 17:44:32 by elehtora         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,7 @@ $(NAME) : $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
 
 debug : $(SRCS)
-	$(CC) $(DEBUG) $(INCL) $(LIBPATH) $(LIB) -o $(NAME) $(SRCS)
+	$(CC) $(DEBUG) $(SRCS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
 
 
 clean :

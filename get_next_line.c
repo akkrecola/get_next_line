@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/04 16:49:18 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/04 17:55:09 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@
  * Create a line as the strjoin() base if none exists
  * Allocate buffer if this is the first call to this fildes
  */
-//TODO
 /*
  * stash() stores the rest of a buffer ready for a new call to get_next_line().
  * The stashing is made in a non-destructive way, i.e. a temporary buffer is
@@ -65,7 +64,7 @@
  * join() returns 1, 0 or -1, if a newline has been found, if it was not found,
  * or if an error has occured, respectively.
  */
-static ssize_t	init(char **line, char *buf, char **newline, ssize_t *ret)
+static ssize_t	init(char **line, char *buf, char **newline)
 {
 	if (*line)
 		ft_strdel(line);
@@ -74,14 +73,9 @@ static ssize_t	init(char **line, char *buf, char **newline, ssize_t *ret)
 		return (-1);
 	ft_bzero(buf, BUFF_SIZE + 1);
 	*newline = NULL;
-	*ret = 1;
 	return (0);
 }
 
-/*
-* BUG? Case where '\n' refers to the last character in a file, and the
-* resulting pointer from ft_strsep would overflow the file buffer
-*/
 static ssize_t	join(char **line, char *str, char **newline)
 {
 	char	*temp;
@@ -95,10 +89,12 @@ static ssize_t	join(char **line, char *str, char **newline)
 	return (0);
 }
 
-// Since buf is always null-terminated, cache is as well; hence strdup in stash()
-// doesn't overflow.
-//TODO cache states (non-init OR need to clear)
-//newline can refer to either the cache (pop) or buffer (iteration)
+/*
+   Since buf is always null-terminated, cache is as well; hence strdup in stash()
+   doesn't overflow.
+   newline can refer to either the cache (pop) or buffer (iteration)
+*/
+
 static ssize_t	stash(char **cache, char **newline)
 {
 	char	*temp;
@@ -119,7 +115,7 @@ static ssize_t	pop(char **line, char **cache, char **newline)
 		if (join(line, *cache, newline))
 			return (-1);
 		if (*newline)
-			return (stash(cache, newline)); //
+			return (stash(cache, newline));
 		else
 			ft_strdel(cache);
 	}
@@ -134,19 +130,21 @@ int	get_next_line(const int fd, char **line)
 	char		*newline;
 	ssize_t		ret;
 
-	if (fd < 0 || fd >= MAX_FD || !line || init(line, &buf[0], &newline, &ret))
+	if (fd < 0 || fd >= MAX_FD || !line || init(line, &buf[0], &newline))
 		return (-1);
-	ret = pop(line, &cache[fd], &newline); //
+	ret = pop(line, &cache[fd], &newline);
 	if (ret)
 		return ((int) ret);
 	ret = 1;
 	while (ret > 0 && !newline)
 	{
-		ret = read(fd, buf, BUFF_SIZE); //
-		if (join(line, buf, &newline)) //
+		ret = read(fd, buf, BUFF_SIZE);
+		if (join(line, buf, &newline))
 			return (-1);
 	}
 	if (newline)
-		return ((int) stash(&cache[fd], &newline)); //
-	return ((int) ret);
+		return ((int) stash(&cache[fd], &newline));
+	if (ret)
+		return (1);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/03 15:06:11 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/04 16:49:18 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,16 @@
  * join() returns 1, 0 or -1, if a newline has been found, if it was not found,
  * or if an error has occured, respectively.
  */
-static ssize_t	init(char **line, char *buf, char **newline)
+static ssize_t	init(char **line, char *buf, char **newline, ssize_t *ret)
 {
 	if (*line)
-		free(*line);
+		ft_strdel(line);
 	*line = ft_strnew(0);
 	if (!*line)
 		return (-1);
 	ft_bzero(buf, BUFF_SIZE + 1);
 	*newline = NULL;
-	// TODO
+	*ret = 1;
 	return (0);
 }
 
@@ -89,7 +89,7 @@ static ssize_t	join(char **line, char *str, char **newline)
 	*newline = ft_strsep(&str, '\n');
 	temp = *line;
 	*line = ft_strjoin(*line, str);
-	free(temp);
+	ft_strdel(&temp);
 	if (!*line)
 		return (-1);
 	return (0);
@@ -98,13 +98,14 @@ static ssize_t	join(char **line, char *str, char **newline)
 // Since buf is always null-terminated, cache is as well; hence strdup in stash()
 // doesn't overflow.
 //TODO cache states (non-init OR need to clear)
-static ssize_t	stash(char **cache, char **newline) //newline can refer to either the cache (pop) or buffer (iteration)
+//newline can refer to either the cache (pop) or buffer (iteration)
+static ssize_t	stash(char **cache, char **newline)
 {
 	char	*temp;
 
 	temp = ft_strdup(*newline);
 	if (*cache)
-		free(*cache);
+		ft_strdel(cache);
 	*cache = temp;
 	if (!*cache)
 		return (-1);
@@ -119,10 +120,13 @@ static ssize_t	pop(char **line, char **cache, char **newline)
 			return (-1);
 		if (*newline)
 			return (stash(cache, newline)); //
+		else
+			ft_strdel(cache);
 	}
 	return (0);
 }
 
+//Doesn't behave well if there's no \n at the file end
 int	get_next_line(const int fd, char **line)
 {
 	static char	*cache[MAX_FD];
@@ -130,21 +134,19 @@ int	get_next_line(const int fd, char **line)
 	char		*newline;
 	ssize_t		ret;
 
-	if (fd < 0 || fd >= MAX_FD || !line)
-		return (-1);
-	if (init(line, &buf[0], &newline)) // check buffer deref syntax
+	if (fd < 0 || fd >= MAX_FD || !line || init(line, &buf[0], &newline, &ret))
 		return (-1);
 	ret = pop(line, &cache[fd], &newline); //
 	if (ret)
 		return ((int) ret);
 	ret = 1;
-	while (ret)
+	while (ret > 0 && !newline)
 	{
 		ret = read(fd, buf, BUFF_SIZE); //
 		if (join(line, buf, &newline)) //
 			return (-1);
-		if (newline)
-			return ((int) stash(&cache[fd], &newline)); //
 	}
-	return (0);
+	if (newline)
+		return ((int) stash(&cache[fd], &newline)); //
+	return ((int) ret);
 }

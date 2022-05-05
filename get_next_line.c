@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/05 17:42:46 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/05 18:16:39 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,16 @@ int	get_next_line(const int fd, char **line)
 	if (*line)
 		free(*line);
 	*line = ft_strnew(0);
+	//pop
 	if (cache[fd])
 	{
+		//join
 		newline = ft_strsep(&cache[fd], '\n');
 		*line = ft_strjoin(*line, cache[fd]);
 		if (newline)
 		{
 			tmp = cache[fd];
-			if (!(cache[fd] = ft_strdup(newline)))
+			if (!(cache[fd] = ft_strdup(newline))) // no alloc protection
 				return (-1);
 			free(tmp);
 			return (1);
@@ -44,8 +46,10 @@ int	get_next_line(const int fd, char **line)
 			return (-1);
 		buf[ret] = 0;
 		cache[fd] = ft_strdup(&buf[0]);
+		//join
 		newline = ft_strsep(&cache[fd], '\n');
 		*line = ft_strjoin(*line, cache[fd]);
+		//stash
 		if (newline)
 		{
 			tmp = cache[fd];

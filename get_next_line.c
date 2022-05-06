@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/06 14:32:00 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/06 14:54:43 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	free_on_error(char **cache)
 	return (-1);
 }
 
-static ssize_t	join(char **cache, char **line, char **newline)
+static ssize_t	join(char **line, char **cache, char **newline)
 {
 	char	*tmp;
 
@@ -88,7 +88,8 @@ int	get_next_line(const int fd, char **line)
 		if (ret == -1)
 			return (free_on_error(&cache[fd]));
 		buf[ret] = 0;
-		cache[fd] = ft_strdup(&buf[0]);
+		if (!(cache[fd] = ft_strdup(&buf[0])))
+			return (free_on_error(&cache[fd]));
 		if ((ret = join(line, &cache[fd], &newline))) //join
 			return ((int) ret);
 	}

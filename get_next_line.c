@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/06 16:49:55 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/06 17:30:52 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,16 @@ static ssize_t	stash(char **cache, char *buf, char **newline)
 {
 	char	*tmp;
 
+	*newline = ft_strsep(&buf, '\n');
 	if (*newline)
 	{
 		tmp = *cache;
 		*cache = ft_strdup(*newline);
 		free(tmp);
 		if (!*cache)
-			return (-1);
+			return (0);
 	}
-	return (0);
+	return (1);
 }
 
 static ssize_t	join(char **line, char *buf)
@@ -35,11 +36,11 @@ static ssize_t	join(char **line, char *buf)
 	*line = ft_strjoin(*line, buf);
 	free(tmp);
 	if (!*line)
-		return (-1);
-	return (0);
+		return (0);
+	return (1);
 }
 
-static ssize_t	pop(char **line, char **cache, char **newline)
+static ssize_t	pop(char **cache, char **line, char **newline)
 {
 	*newline = NULL;
 	if (*cache)
@@ -50,11 +51,11 @@ static ssize_t	pop(char **line, char **cache, char **newline)
 			ft_strcpy(*cache, *newline);
 		else
 			ft_strclr(*cache);
+		if (*line == NULL)
+			return (0);
 	}
 	else
 		*line = ft_strnew(0);
-	if (!*line)
-		return (-1);
 	return (1);
 }
 
@@ -67,8 +68,8 @@ int	get_next_line(int fd, char **line)
 
 	if (fd < 0 || fd > MAX_FD || !line)
 		return (-1);
-	ret = pop(line, &cache[fd], &newline);
-	if (ret == -1)
+	ret = pop(&cache[fd], line, &newline);
+	if (!ret)
 		return (-1);
 	while (ret && !newline)
 	{
@@ -76,12 +77,13 @@ int	get_next_line(int fd, char **line)
 		if (ret == -1)
 			return (-1);
 		buf[ret] = '\0';
-		if (join(line, buf) == -1)
+		if (!(stash(&cache[fd], buf, &newline)))
 			return (-1);
-		if (stash(&cache[fd], buf, &newline) == -1)
+		if (!(join(line, buf)))
 			return (-1);
 	}
-	if (ret || ft_strlen(*line))
+	if (ret || **line)
 		return (1);
+	free(*line);
 	return (0);
 }

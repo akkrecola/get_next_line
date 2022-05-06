@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/07 06:03:16 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/06 14:54:43 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/06 15:04:58 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,6 @@ int	get_next_line(const int fd, char **line)
 	}
 	if (**line)
 		return (1);
+	ft_strdel(line);
 	return (0);
 }

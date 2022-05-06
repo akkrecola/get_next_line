@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 22:22:09 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/05 17:43:56 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/06 14:30:28 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,25 @@ int main(int argc, char **argv)
 	char	*line;
 	int		fd;
 	ssize_t	ret;
+	char	*file;
 
 	if (argc != 2)
 		return -1;
-	fd = open(argv[1], O_RDONLY);
+	file = argv[1];
+	fd = open(file, O_RDONLY);
 
 	ret = 1;
 	while (ret)
 	{
 		ft_putendl(line);
 		ret = get_next_line(fd, &line);
+		if (ret == 1)
+			ft_putendl("GNL read a line. (returned 1");
 	}
+	if (ret == -1)
+		ft_putendl("Error was produced. (returned -1)");
+	if (ret == 0)
+		ft_putendl("Reading was completed (GNL exited with 0).");
 
 	close(fd);
 	return 0;

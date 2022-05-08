@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/06 17:30:52 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/08 19:55:22 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ int	get_next_line(int fd, char **line)
 
 	if (fd < 0 || fd > MAX_FD || !line)
 		return (-1);
+	if (*line)
+		ft_strdel(line);
 	ret = pop(&cache[fd], line, &newline);
 	if (!ret)
 		return (-1);

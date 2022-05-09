@@ -6,7 +6,7 @@
 #    By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/25 03:24:01 by elehtora          #+#    #+#              #
-#    Updated: 2022/05/09 14:20:21 by elehtora         ###   ########.fr        #
+#    Updated: 2022/05/09 15:10:17 by elehtora         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,18 +30,23 @@ RM			= /bin/rm -rf
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
+	@echo 'Making executable.'
+	@$(CC) $(CFLAGS) $(OBJS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
 
 debug : $(SRCS)
-	$(CC) $(DEBUG) $(SRCS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
+	@echo 'Making debug executable.'
+	@$(CC) $(DEBUG) $(SRCS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
 
 sanitize : $(SRCS)
-	$(CC) $(DEBUG) -fsanitize=address $(SRCS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
+	@echo 'Making debug executable with -fsanitize=address.'
+	@$(CC) $(DEBUG) -fsanitize=address $(SRCS) $(INCL) $(LIBPATH) $(LIB) -o $(NAME)
 
 clean :
-	$(RM) $(OBJS) $(NAME).dSYM output
+	@echo 'Directory cleaned by make.'
+	@$(RM) $(OBJS) $(NAME).dSYM
 
 fclean : clean
-	$(RM) $(NAME)
+	@echo 'Executable removed.'
+	@$(RM) $(NAME)
 
 re : fclean all

@@ -6,11 +6,30 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/08 19:55:22 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/09 13:28:47 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static ssize_t	pop(char **cache, char **line, char **newline)
+{
+	*newline = NULL;
+	if (*cache)
+	{
+		*newline = ft_strsep(cache, '\n');
+		*line = ft_strdup(*cache);
+		if (*newline)
+			ft_strcpy(*cache, *newline);
+		else
+			ft_strclr(*cache);
+		if (*line == NULL)
+			return (0);
+	}
+	else
+		*line = ft_strnew(0);
+	return (1);
+}
 
 static ssize_t	stash(char **cache, char *buf, char **newline)
 {
@@ -37,25 +56,6 @@ static ssize_t	join(char **line, char *buf)
 	free(tmp);
 	if (!*line)
 		return (0);
-	return (1);
-}
-
-static ssize_t	pop(char **cache, char **line, char **newline)
-{
-	*newline = NULL;
-	if (*cache)
-	{
-		*newline = ft_strsep(cache, '\n');
-		*line = ft_strdup(*cache);
-		if (*newline)
-			ft_strcpy(*cache, *newline);
-		else
-			ft_strclr(*cache);
-		if (*line == NULL)
-			return (0);
-	}
-	else
-		*line = ft_strnew(0);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/09 13:28:47 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/09 14:23:18 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 static ssize_t	pop(char **cache, char **line, char **newline)
 {
+	if (*line)
+		ft_strdel(line);
 	*newline = NULL;
 	if (*cache)
 	{
@@ -59,6 +61,14 @@ static ssize_t	join(char **line, char *buf)
 	return (1);
 }
 
+static int	teardown(char **line, char **cache)
+{
+	if (*cache)
+		free(*cache);
+	free(*line);
+	return (0);
+}
+
 int	get_next_line(int fd, char **line)
 {
 	static char	*cache[MAX_FD];
@@ -68,8 +78,6 @@ int	get_next_line(int fd, char **line)
 
 	if (fd < 0 || fd > MAX_FD || !line)
 		return (-1);
-	if (*line)
-		ft_strdel(line);
 	ret = pop(&cache[fd], line, &newline);
 	if (!ret)
 		return (-1);
@@ -86,6 +94,5 @@ int	get_next_line(int fd, char **line)
 	}
 	if (ret || **line)
 		return (1);
-	free(*line);
-	return (0);
+	return (teardown(line, &cache[fd]));
 }

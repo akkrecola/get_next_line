@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 22:22:09 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/09 13:25:40 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/09 14:00:01 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,23 @@ int main(int argc, char **argv)
 	int		fd;
 	ssize_t	ret;
 	char	*file;
+	size_t	lines;
+	size_t	i;
 
-	if (argc != 2)
+	if (argc != 3)
 		return -1;
 	file = argv[1];
+	lines = (size_t) ft_atoi(argv[2]);
 	fd = open(file, O_RDONLY);
 
 	ret = 1;
-	while (ret)
+	i = 0;
+	while (ret > 0 && (lines == 0 || i < lines))
 	{
-		ft_putendl(line);
 		ret = get_next_line(fd, &line);
+		if (ret > 0)
+			ft_putendl(line);
+		i++;
 //		if (ret == 1)
 //			ft_putendl("GNL read a line. (returned 1");
 	}

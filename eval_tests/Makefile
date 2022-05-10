@@ -6,13 +6,13 @@
 #    By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/25 03:24:01 by elehtora          #+#    #+#              #
-#    Updated: 2022/05/09 15:10:17 by elehtora         ###   ########.fr        #
+#    Updated: 2022/05/10 12:26:42 by elehtora         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= gnl.out
 
-SRCS		= ../get_next_line.c fastmain.c
+SRCS		= ../get_next_line.c main.c
 OBJS		= $(SRCS:.c=.o)
 LIB			= -lft
 

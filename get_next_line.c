@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/10 12:27:52 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/10 17:01:54 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,10 @@ static ssize_t	pop(char **cache, char **line, char **newline)
 	return (1);
 }
 
+/*
+ * stash() looks for a newline in the buffer, and if it's found,
+ * the string starting from that newline is saved to the cache.
+ */
 static ssize_t	stash(char **cache, char *buf, char **newline)
 {
 	char	*tmp;
@@ -82,6 +86,9 @@ static ssize_t	stash(char **cache, char *buf, char **newline)
 	return (1);
 }
 
+/*
+ * join() simply joins the buffer to the resulting line in a safe manner.
+*/
 static ssize_t	join(char **line, char *buf)
 {
 	char	*tmp;
@@ -106,6 +113,9 @@ static int	teardown(char **line, char **cache)
 	return (0);
 }
 
+/*
+ * get_next_line() //TODO
+ */
 int	get_next_line(int fd, char **line)
 {
 	static char	*cache[MAX_FD];

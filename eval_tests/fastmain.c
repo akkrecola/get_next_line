@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 22:22:09 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/09 15:10:57 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/10 12:20:55 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int main(int argc, char **argv)
 		return -1;
 	file = argv[1];
 	fd = open(file, O_RDONLY);
+	line = NULL;
 
 	ret = 1;
 	while (ret)

@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 22:22:09 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/10 12:20:55 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/10 16:17:48 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,13 @@ int main(int argc, char **argv)
 	{
 		ret = get_next_line(fd, &line);
 		/* Uncomment under to get output */
-		if (ret > 0)
-			ft_putendl(line);
+//		if (ret > 0)
+//			ft_putendl(line);
 	}
 	if (ret == -1)
 		ft_putendl("\n***\nError was produced. (returned -1)");
 	if (ret == 0)
-		ft_putendl("\n***\nReading was completed (GNL exited with 0).");
+		ft_putendl("\n***\n>>>>>>>>Reading was completed (GNL exited with 0).<<<<<<<<<\n***\n");
 
 	close(fd);
 	return 0;

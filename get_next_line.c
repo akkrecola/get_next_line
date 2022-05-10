@@ -6,11 +6,44 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/09 14:23:18 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/10 12:27:52 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+/*
+   get_next_line() reads a file from a file descriptor one line (separated by
+   a newline '\n') at a time.
+
+   The function takes as parameters an open file descriptor fd, and a pointer
+   to a string that's used to save the line read from file descriptor fd.
+
+   get_next_line() returns 1 on succesfully read line, -1 on error, and 0 when
+   a file has finished reading (EOF).
+
+   The function is designed to work on multiple open file descriptors at once,
+   i.e. one can read from files A, then B, then C, and again B, without losing
+   the correct position in each file.
+
+   This implementation is based on a heap allocated cache, where the bytes stored
+   in buffer after a successfully read line are stored to wait for a new call
+   to get_next_line (see: stash()).
+
+   The function naming convention loosely resembles that of git-stash, due to
+   the similar caching logic used here. See respective functions for details.
+
+   The function is memory safe.
+*/
+
+/*
+   pop() (1) retrieves the contents of the cache stashed by a previous call
+   to stash(), (2) joins it to the line that's returned by get_next_line(), (3) 
+   and prepares the cache for a stash() -call down the line.
+
+   The function also frees the previously read line and allocates a base
+   for the currently read line.
+*/
 
 static ssize_t	pop(char **cache, char **line, char **newline)
 {
@@ -61,6 +94,10 @@ static ssize_t	join(char **line, char *buf)
 	return (1);
 }
 
+/*
+   A teardown function that frees any allocated memory when reading
+   reaches EOF.
+*/
 static int	teardown(char **line, char **cache)
 {
 	if (*cache)

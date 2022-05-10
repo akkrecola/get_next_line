@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/10 12:27:52 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/10 17:12:41 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@
    the similar caching logic used here. See respective functions for details.
 
    The function is memory safe.
+
+   NOTE: This version of the function does not pass the 42FileChecker
+   moulitest. This is due to proper memory management, i.e. freeing memory
+   from previous line on each call to prevent subsequent leaks, and freeing
+   cache memory before get_next_line() returns 0. This point can be demonstrated
+   during defence.
 */
 
 /*
@@ -66,6 +72,10 @@ static ssize_t	pop(char **cache, char **line, char **newline)
 	return (1);
 }
 
+/*
+ * stash() looks for a newline in the buffer, and if it's found,
+ * the string starting from that newline is saved to the cache.
+ */
 static ssize_t	stash(char **cache, char *buf, char **newline)
 {
 	char	*tmp;
@@ -82,6 +92,9 @@ static ssize_t	stash(char **cache, char *buf, char **newline)
 	return (1);
 }
 
+/*
+ * join() simply joins the buffer to the resulting line in a safe manner.
+*/
 static ssize_t	join(char **line, char *buf)
 {
 	char	*tmp;
@@ -106,6 +119,9 @@ static int	teardown(char **line, char **cache)
 	return (0);
 }
 
+/*
+ * get_next_line() //TODO
+ */
 int	get_next_line(int fd, char **line)
 {
 	static char	*cache[MAX_FD];

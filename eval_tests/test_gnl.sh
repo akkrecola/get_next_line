@@ -14,7 +14,7 @@ echo ***
 echo ***
 
 make debug && make clean
-if [[ $OSTYPE == "darwin" ]]; then
+if [[ $OSTYPE == "darwin18.0" ]]; then
 	echo '>>>>>> Running leaks test. <<<<<<<'
 	leaks -atExit -- ./gnl.out test_files/$1 && make fclean
 elif [[ $OSTYPE == "linux-gnu" ]]; then

@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 22:22:09 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/10 12:26:08 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/11 13:55:47 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ int main(int argc, char **argv)
 		ret = get_next_line(fd, &line);
 		if (ret > 0)
 			ft_putendl(line);
+		if (line)
+			free(line);
 		i++;
 	}
 	if (ret == -1)

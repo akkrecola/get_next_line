@@ -1,0 +1,78 @@
+GNL DOCS
+***
+
+int get_next_line(int fd, char **line);
+
+#include "get_next_line.h"
+
+Description:
+   get_next_line() (abbr. GNL) reads a file from a file descriptor one line
+   (separated by a newline '\n') at a time. The read line is saved to the variable
+   'line', which is passed to the function by reference.
+
+Example:
+   GNL can be used to loop through a file with:
+   while (get_next_line(fd, &line) == 1)
+   {
+   	//do stuff
+   	free(line);
+   }
+
+Parameters:
+   The function takes as parameters an open file descriptor fd, and a pointer
+   to a string that's used to save the line read from file descriptor fd.
+
+Return:
+   get_next_line() returns 1 on succesfully read line, -1 on error, and 0 when
+   a file has finished reading (EOF).
+
+Misc:
+   The function is designed to work on multiple open file descriptors at once,
+   i.e. one can read from files A, then B, then C, and again B, without losing
+   the correct position in each file.
+   
+   The read buffer can be modified in the get_next_line.h header under
+   BUFF_SIZE.
+
+   This implementation is based on a heap allocated cache, where the bytes stored
+   in buffer after a successfully read line are stored to wait for a new call
+   to get_next_line (see: stash()).
+
+   The function naming convention loosely resembles that of git-stash, due to
+   the similar caching logic used here. See respective functions for details.
+
+   The function is NOT strictly memory safe. Freeing the memory of the line falls
+   to the hands of the user, at least in this version. This decision is
+   deliberate after consulting peers.
+   
+   Running GNL with buffer sizes of several Mbs is discouraged to avoid
+   segfaults.
+
+   The function ft_strsep() used in the implementation from libft is a recreated
+   libc-function, hence a general purpose function acceptable in libft.
+
+Functions (in order of apparition):
+1. pop() (1) retrieves the contents of the cache stashed by a previous call
+   to stash(), (2) joins it to the line that's returned by get_next_line(), (3) 
+   and prepares the cache for a stash() -call down the line.
+
+   The function also frees the previously read line and allocates a base
+   for the currently read line.
+
+2. stash() looks for a newline in the buffer, and if it's found,
+   the string starting from that newline is saved to the cache.
+
+3. join() simply joins the buffer to the resulting line in a safe manner.
+
+4. get_next_line() (gnl for short) reads a line from the file descriptor fd and
+   allocates it to a line. It does this by:
+   1. Checking for cached memory (see: pop()).
+   2. Looping read(2) and joining (see: join()) until a newline character is found or the read
+   file reaches EOF.
+   3. Storing the rest of the buffer after a \n in cache to be used in a new call
+   to gnl (see: stash()).
+   
+   All allocated memory is freed properly, other than memory allocated for the resulting
+   line. Management of this is left to the user.
+   
+   Returns are 0 for EOF, -1 for error and 1 for succesfully read line.

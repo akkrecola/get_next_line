@@ -64,10 +64,7 @@ Functions (in order of apparition):
 
 3. join() simply joins the buffer to the resulting line in a safe manner.
 
-4. teardown() frees any allocated memory when reading
-   reaches EOF.
-   
-5. get_next_line() (gnl for short) reads a line from the file descriptor fd and
+4. get_next_line() (gnl for short) reads a line from the file descriptor fd and
    allocates it to a line. It does this by:
    1. Checking for cached memory (see: pop()).
    2. Looping read(2) and joining (see: join()) until a newline character is found or the read

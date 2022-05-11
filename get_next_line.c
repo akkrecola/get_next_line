@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/11 15:02:21 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/11 15:54:58 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,6 @@ static ssize_t	join(char **line, char *buf)
 	return (1);
 }
 
-static int	teardown(char **cache)
-{
-	if (*cache)
-		free(*cache);
-	return (0);
-}
-
 int	get_next_line(int fd, char **line)
 {
 	static char	*cache[MAX_FD];
@@ -106,5 +99,5 @@ int	get_next_line(int fd, char **line)
 	}
 	if (ret || **line)
 		return (1);
-	return (teardown(&cache[fd]));
+	return (0);
 }

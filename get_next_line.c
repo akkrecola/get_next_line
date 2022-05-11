@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/10 17:13:57 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/11 13:39:29 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,9 @@
    The function naming convention loosely resembles that of git-stash, due to
    the similar caching logic used here. See respective functions for details.
 
-   The function is memory safe.
+   The function is NOT strictly memory safe. Freeing the line memory falls
+   to the hands of the user, at least in this version. The decision is
+   deliberate after consulting peers.
 
    NOTE: This version of the function does not pass the 42FileChecker
    moulitest. This is due to proper memory management, i.e. freeing memory
@@ -53,8 +55,6 @@
 
 static ssize_t	pop(char **cache, char **line, char **newline)
 {
-	if (*line)
-		ft_strdel(line);
 	*newline = NULL;
 	if (*cache)
 	{
@@ -111,6 +111,7 @@ static ssize_t	join(char **line, char *buf)
    A teardown function that frees any allocated memory when reading
    reaches EOF.
 */
+/*
 static int	teardown(char **line, char **cache)
 {
 	if (*cache)
@@ -118,7 +119,7 @@ static int	teardown(char **line, char **cache)
 	free(*line);
 	return (0);
 }
-
+*/
 /*
  * get_next_line() //TODO
  */
@@ -147,5 +148,6 @@ int	get_next_line(int fd, char **line)
 	}
 	if (ret || **line)
 		return (1);
-	return (teardown(line, &cache[fd]));
+	free(*line);
+	return (0);
 }

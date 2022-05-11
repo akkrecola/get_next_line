@@ -48,6 +48,9 @@ Misc:
    Running GNL with buffer sizes of several Mbs is discouraged to avoid
    segfaults.
 
+   The function ft_strsep() used in the implementation from libft is a recreated
+   libc-function, hence a general purpose function acceptable in libft.
+
 Functions (in order of apparition):
 1. pop() (1) retrieves the contents of the cache stashed by a previous call
    to stash(), (2) joins it to the line that's returned by get_next_line(), (3) 

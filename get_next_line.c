@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/11 15:59:32 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/12 18:52:23 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,11 @@
 Description:
    get_next_line() reads a file from a file descriptor one line (separated by
    a newline '\n') at a time. The read line is saved to the variable line
-   which is passed to the function by reference.
+   which is passed to the function by reference. (See README for more).
+
+Usage:
+   Declare a string to pass as **line to the function, and free(line) after
+   every call to get_next_line() to prevent leaks.
 
 Parameters:
    The function takes as parameters an open file descriptor fd, and a pointer
@@ -27,6 +31,13 @@ Return:
    a file has finished reading (EOF).
 */
 
+/*
+ * Pop() checks if there's cached buffer in store, and if found, makes that
+ * into the beginning of the resulting line. If a newline is found in the cache,
+ * that \n is turned in to a terminator \0 and a pointer to the next line (char
+ * after the new \0) is saved to 'newline'. If no newline is found, cache is
+ * cleared and 'line' is allocated an empty string as a base.
+ */
 static ssize_t	pop(char **cache, char **line, char **newline)
 {
 	*newline = NULL;
@@ -46,6 +57,10 @@ static ssize_t	pop(char **cache, char **line, char **newline)
 	return (1);
 }
 
+/*
+ * Stash() seeks a newline in buffer, and if found, sets that newline \n to \0,
+ * and saves everything after that newline to cache.
+ */
 static ssize_t	stash(char **cache, char *buf, char **newline)
 {
 	char	*tmp;
@@ -62,6 +77,10 @@ static ssize_t	stash(char **cache, char *buf, char **newline)
 	return (1);
 }
 
+/*
+ * Join() simply joins a string (previously formed with strsep() in stash()) to
+ * the result variable 'line'.
+ */
 static ssize_t	join(char **line, char *buf)
 {
 	char	*tmp;
@@ -99,5 +118,6 @@ int	get_next_line(int fd, char **line)
 	}
 	if (ret || **line)
 		return (1);
+	free(cache[fd]);
 	return (0);
 }

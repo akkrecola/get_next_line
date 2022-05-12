@@ -6,7 +6,7 @@
 #    By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/25 03:24:01 by elehtora          #+#    #+#              #
-#    Updated: 2022/05/11 13:35:04 by elehtora         ###   ########.fr        #
+#    Updated: 2022/05/12 15:08:28 by elehtora         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ sanitize : $(SRCS)
 
 clean :
 	@echo 'Directory cleaned by make.'
-	@$(RM) $(OBJS) $(NAME).dSYM
+	@$(RM) $(OBJS) $(NAME).dSYM output
 
 fclean : clean
 	@echo 'Executable removed.'

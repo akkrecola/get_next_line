@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 22:22:09 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/12 15:14:22 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/12 19:23:29 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ int main(int argc, char **argv)
 		free(line);
 		i++;
 	}
-	if (ret == 0)
-		ft_putendl(">>>>> Reading was completed (GNL exited with 0).");
+//	if (ret == 0)
+//		ft_putendl(">>>>> Reading was completed (GNL exited with 0).");
 	if (ret == 1 && i == lines)
 	{
 		ft_putstr(">>>>> Reading was completed.\n>>>>> Read lines: ");

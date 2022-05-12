@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/12 15:06:41 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/12 21:18:22 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,13 @@ Return:
    a file has finished reading (EOF).
 */
 
+/*
+ * Pop() checks if there's cached buffer in store, and if found, makes that
+ * into the beginning of the resulting line. If a newline is found in the cache,
+ * that \n is turned in to a terminator \0 and a pointer to the next line (char
+ * after the new \0) is saved to 'newline'. If no newline is found, cache is
+ * cleared and 'line' is allocated an empty string as a base.
+ */
 static ssize_t	pop(char **cache, char **line, char **newline)
 {
 	*newline = NULL;
@@ -50,6 +57,10 @@ static ssize_t	pop(char **cache, char **line, char **newline)
 	return (1);
 }
 
+/*
+ * Stash() seeks a newline in buffer, and if found, sets that newline \n to \0,
+ * and saves everything after that newline to cache.
+ */
 static ssize_t	stash(char **cache, char *buf, char **newline)
 {
 	char	*tmp;
@@ -66,6 +77,10 @@ static ssize_t	stash(char **cache, char *buf, char **newline)
 	return (1);
 }
 
+/*
+ * Join() simply joins a string (previously formed with strsep() in stash()) to
+ * the result variable 'line'.
+ */
 static ssize_t	join(char **line, char *buf)
 {
 	char	*tmp;

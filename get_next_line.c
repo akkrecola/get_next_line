@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/11 15:54:58 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/12 15:06:41 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,11 @@
 Description:
    get_next_line() reads a file from a file descriptor one line (separated by
    a newline '\n') at a time. The read line is saved to the variable line
-   which is passed to the function by reference.
+   which is passed to the function by reference. (See README for more).
+
+Usage:
+   Declare a string to pass as **line to the function, and free(line) after
+   every call to get_next_line() to prevent leaks.
 
 Parameters:
    The function takes as parameters an open file descriptor fd, and a pointer
@@ -99,5 +103,6 @@ int	get_next_line(int fd, char **line)
 	}
 	if (ret || **line)
 		return (1);
+	free(cache[fd]);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/12 18:52:23 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/13 14:27:35 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	get_next_line(int fd, char **line)
 	char		*newline;
 	ssize_t		ret;
 
-	if (fd < 0 || fd > MAX_FD || !line)
+	if (fd < 0 || fd >= MAX_FD || !line)
 		return (-1);
 	ret = pop(&cache[fd], line, &newline);
 	if (!ret)

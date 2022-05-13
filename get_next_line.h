@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/25 03:47:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/10 12:29:52 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/13 14:29:31 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # define BUFF_SIZE 16
 
 /* Definition for maximum open file descriptors (in mouli). */
-# define MAX_FD 4096
+# define MAX_FD 12288
 
 /* Function prototype */
 int		get_next_line(const int fd, char **line);

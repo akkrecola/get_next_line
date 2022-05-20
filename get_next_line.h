@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/25 03:47:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/13 14:29:31 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/20 16:51:14 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <unistd.h>
 
 /* Definition for read() size. Varied during defence. */
-# define BUFF_SIZE 16
+# define BUFF_SIZE 256
 
 /* Definition for maximum open file descriptors (in mouli). */
 # define MAX_FD 12288

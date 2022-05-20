@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/20 15:22:26 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/20 16:27:29 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,17 @@ Return:
 static ssize_t	pop(char *buf, char **line, char **newline)
 {
 	*newline = NULL;
-	if (buf)
+	*newline = ft_strsep(&buf, '\n');
+	*line = ft_strdup(buf);
+	if (*newline)
 	{
-		*newline = ft_strsep(&buf, '\n');
-		*line = ft_strdup(buf);
-		if (*newline)
-			ft_strcpy(buf, *newline);
-		else
-			ft_strclr(buf);
-		if (*line == NULL)
-			return (0);
+		ft_strcpy(buf, *newline);
+		*newline = buf;
 	}
 	else
-		*line = ft_strnew(0);
+		ft_strclr(buf);
+	if (*line == NULL)
+		return (0);
 	return (1);
 }
 
@@ -64,7 +62,10 @@ static ssize_t	pop(char *buf, char **line, char **newline)
 static ssize_t	stash(char *buf, char **newline)
 {
 	if (*newline)
+	{
 		ft_strcpy(buf, *newline);
+		*newline = buf;
+	}
 	else
 		ft_bzero(buf, BUFF_SIZE);
 	return (1);

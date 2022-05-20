@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/13 14:31:57 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/20 15:22:26 by elehtora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,17 +38,17 @@ Return:
  * after the new \0) is saved to 'newline'. If no newline is found, cache is
  * cleared and 'line' is allocated an empty string as a base.
  */
-static ssize_t	pop(char **cache, char **line, char **newline)
+static ssize_t	pop(char *buf, char **line, char **newline)
 {
 	*newline = NULL;
-	if (*cache)
+	if (buf)
 	{
-		*newline = ft_strsep(cache, '\n');
-		*line = ft_strdup(*cache);
+		*newline = ft_strsep(&buf, '\n');
+		*line = ft_strdup(buf);
 		if (*newline)
-			ft_strcpy(*cache, *newline);
+			ft_strcpy(buf, *newline);
 		else
-			ft_strclr(*cache);
+			ft_strclr(buf);
 		if (*line == NULL)
 			return (0);
 	}
@@ -61,19 +61,12 @@ static ssize_t	pop(char **cache, char **line, char **newline)
  * Stash() seeks a newline in buffer, and if found, sets that newline \n to \0,
  * and saves everything after that newline to cache.
  */
-static ssize_t	stash(char **cache, char *buf, char **newline)
+static ssize_t	stash(char *buf, char **newline)
 {
-	char	*tmp;
-
-	*newline = ft_strsep(&buf, '\n');
 	if (*newline)
-	{
-		tmp = *cache;
-		*cache = ft_strdup(*newline);
-		free(tmp);
-		if (!*cache)
-			return (0);
-	}
+		ft_strcpy(buf, *newline);
+	else
+		ft_bzero(buf, BUFF_SIZE);
 	return (1);
 }
 
@@ -81,13 +74,14 @@ static ssize_t	stash(char **cache, char *buf, char **newline)
  * Join() simply joins a string (previously formed with strsep() in stash()) to
  * the result variable 'line'.
  */
-static ssize_t	join(char **line, char *buf)
+static ssize_t	join(char **line, char *buf, char **newline)
 {
 	char	*tmp;
 
+	*newline = ft_strsep(&buf, '\n');
 	tmp = *line;
 	*line = ft_strjoin(*line, buf);
-	free(tmp);
+	ft_strdel(&tmp);
 	if (!*line)
 		return (0);
 	return (1);
@@ -95,29 +89,27 @@ static ssize_t	join(char **line, char *buf)
 
 int	get_next_line(int fd, char **line)
 {
-	static char	*cache[MAX_FD];
-	char		buf[BUFF_SIZE + 1];
+	static char	buf[MAX_FD][BUFF_SIZE + 1];
 	char		*newline;
 	ssize_t		ret;
 
 	if (fd < 0 || fd >= MAX_FD || !line)
 		return (-1);
-	ret = pop(&cache[fd], line, &newline);
+	ret = pop(&buf[fd][0], line, &newline);
 	if (!ret)
 		return (-1);
 	while (ret && !newline)
 	{
-		ret = read(fd, buf, BUFF_SIZE);
+		ret = read(fd, buf[fd], BUFF_SIZE);
 		if (ret == -1)
 			return (-1);
-		buf[ret] = '\0';
-		if (!(stash(&cache[fd], buf, &newline)))
-			return (-1);
-		if (!(join(line, buf)))
+		buf[fd][ret] = '\0';
+		if (!(join(line, &buf[fd][0], &newline)))
 			return (-1);
 	}
+	if (!(stash(&buf[fd][0], &newline)))
+		return (-1);
 	if (ret || **line)
 		return (1);
-	free(cache[fd]);
 	return (0);
 }

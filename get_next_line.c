@@ -6,7 +6,7 @@
 /*   By: elehtora <elehtora@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/06 15:50:26 by elehtora          #+#    #+#             */
-/*   Updated: 2022/05/20 16:27:29 by elehtora         ###   ########.fr       */
+/*   Updated: 2022/05/23 19:10:30 by Erkka            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ Return:
 */
 
 /*
- * Pop() checks if there's cached buffer in store, and if found, makes that
+ * Pop() checks if there's stored content in buffer, and if found, makes that
  * into the beginning of the resulting line. If a newline is found in the cache,
- * that \n is turned in to a terminator \0 and a pointer to the next line (char
- * after the new \0) is saved to 'newline'. If no newline is found, cache is
- * cleared and 'line' is allocated an empty string as a base.
+ * that \n is turned into a terminator \0 and a pointer to the next line (char
+ * after the new \0) is saved to 'newline'. If no newline is found, the buffer 
+ * is cleared.
  */
 static ssize_t	pop(char *buf, char **line, char **newline)
 {
@@ -57,7 +57,7 @@ static ssize_t	pop(char *buf, char **line, char **newline)
 
 /*
  * Stash() seeks a newline in buffer, and if found, sets that newline \n to \0,
- * and saves everything after that newline to cache.
+ * and saves everything after that newline as the new buffer.
  */
 static ssize_t	stash(char *buf, char **newline)
 {
@@ -88,6 +88,15 @@ static ssize_t	join(char **line, char *buf, char **newline)
 	return (1);
 }
 
+/*
+ * get_next_line scans a buffer of size BUFF_SIZE (defined in get_next_line.h)
+ * for a newline character, and saves a line delimited by that newline to the
+ * parameter line passed as reference.
+ *
+ * The function can be divided to 3 parts - 1) popping the stash, 2) joining
+ * the read buffer, and 3) stashing content when a line is read and successfully
+ * returned.
+ */
 int	get_next_line(int fd, char **line)
 {
 	static char	buf[MAX_FD][BUFF_SIZE + 1];
